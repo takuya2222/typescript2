@@ -1,26 +1,30 @@
+// npx tsc index.ts → node tutorial.js
 class ObjectWrapper {
   private _obj;
 
   /***
-   * 引数のオブジェクトのコピーを this._objに設定
+   * 引数のオブジェクトのコピーをthis._objに設定
    */
-  // constructor(_obj: Object) {}
   constructor(_obj: Object) {
-    this._obj = _obj;
+    this._obj = Object.assign({}, _obj);
   }
 
   /**
    * this._objのコピーを返却
    * @return Object
    */
-  get obj() {}
+  get obj() {
+    return this._obj;
+  }
 
   /**
    * this._obj[key] に valを設定。keyがthis._objに存在しない場合、falseを返却
    * @param key オブジェクトのキー
    * @param val オブジェクトの値
    */
-  set(key, val): boolean {}
+  set(key, val): boolean {
+    this._obj[key] = val;
+  }
 
   /**
    * 指定したキーの値のコピーを返却
