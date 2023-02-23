@@ -1,4 +1,4 @@
-// npx tsc index.ts
+// npx tsc index.ts → node index.js
 var ObjectWrapper = /** @class */ (function () {
     /***
      * 引数のオブジェクトのコピーをthis._objに設定
@@ -23,18 +23,41 @@ var ObjectWrapper = /** @class */ (function () {
      * @param val オブジェクトの値
      */
     ObjectWrapper.prototype.set = function (key, val) {
-        this._obj[key] = val;
+        if (this._obj.hasOwnProperty(key)) {
+            this._obj[key] = val;
+            return true;
+        }
+        else {
+            return false;
+        }
     };
     /**
      * 指定したキーの値のコピーを返却
      * 指定のキーが存在しない場合 undefinedを返却
      * @param key オブジェクトのキー
      */
-    ObjectWrapper.prototype.get = function (key) { };
+    // get(key) {}
+    ObjectWrapper.prototype.get = function (key) {
+        if (key in this._obj) {
+            return this._obj[key];
+        }
+        else {
+            return undefined;
+        }
+    };
     /**
      * 指定した値を持つkeyの配列を返却。該当のものがなければ空の配列を返却。
      */
-    ObjectWrapper.prototype.findKeys = function (val) { };
+    // findKeys(val: unknown) {}
+    ObjectWrapper.prototype.findKeys = function (val) {
+        var keys = [];
+        for (var key in this._obj) {
+            if (this._obj.hasOwnProperty(key) && this._obj[key] === val) {
+                keys.push(key);
+            }
+        }
+        return keys;
+    };
     return ObjectWrapper;
 }());
 /**
@@ -45,6 +68,7 @@ var obj1 = { a: "01", b: "02" };
 var wrappedObj1 = new ObjectWrapper(obj1);
 if (wrappedObj1.obj.a === "01") {
     console.log("OK: get obj()");
+    console.log(wrappedObj1.obj);
 }
 else {
     console.error("NG: get obj()");

@@ -1,11 +1,11 @@
-// npx tsc index.ts → node tutorial.js
-class ObjectWrapper {
+// npx tsc index.ts → node index.js
+class ObjectWrapper<T> {
   private _obj;
 
   /***
    * 引数のオブジェクトのコピーをthis._objに設定
    */
-  constructor(_obj: Object) {
+  constructor(_obj: T) {
     this._obj = Object.assign({}, _obj);
   }
 
@@ -13,7 +13,7 @@ class ObjectWrapper {
    * this._objのコピーを返却
    * @return Object
    */
-  get obj() {
+  get obj(): T {
     return this._obj;
   }
 
@@ -22,8 +22,13 @@ class ObjectWrapper {
    * @param key オブジェクトのキー
    * @param val オブジェクトの値
    */
-  set(key, val): boolean {
-    this._obj[key] = val;
+  set(key: keyof T, val: T[keyof T]): boolean {
+    if (this._obj.hasOwnProperty(key)) {
+      this._obj[key] = val;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -31,12 +36,28 @@ class ObjectWrapper {
    * 指定のキーが存在しない場合 undefinedを返却
    * @param key オブジェクトのキー
    */
-  get(key) {}
+  // get(key) {}
+  get(key: keyof T): T[keyof T] | undefined {
+    if (key in this._obj) {
+      return this._obj[key];
+    } else {
+      return undefined;
+    }
+  }
 
   /**
    * 指定した値を持つkeyの配列を返却。該当のものがなければ空の配列を返却。
    */
-  findKeys(val: unknown) {}
+  // findKeys(val: unknown) {}
+  findKeys(val: unknown): (keyof T)[] {
+    const keys: (keyof T)[] = [];
+    for (const key in this._obj) {
+      if (this._obj.hasOwnProperty(key) && this._obj[key] === val) {
+        keys.push(key);
+      }
+    }
+    return keys;
+  }
 }
 
 /**
@@ -48,6 +69,7 @@ const wrappedObj1 = new ObjectWrapper(obj1);
 
 if (wrappedObj1.obj.a === "01") {
   console.log("OK: get obj()");
+  console.log(wrappedObj1.obj);
 } else {
   console.error("NG: get obj()");
 }
